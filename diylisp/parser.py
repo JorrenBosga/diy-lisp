@@ -14,7 +14,8 @@ def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
 
-    raise NotImplementedError("DIY")
+    #raise NotImplementedError("DIY")
+    return source
 
 ##
 ## Below are a few useful utility functions. These should come in handy when 
