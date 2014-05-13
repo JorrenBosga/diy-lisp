@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from types import Closure
+#from types import Closure
 
 """
 This module contains a few simple helper functions for 
@@ -19,11 +19,11 @@ def is_boolean(x):
 def is_integer(x):
     return isinstance(x, int)
 
-def is_closure(x):
-    return isinstance(x, Closure)
+#def is_closure(x):
+#    return isinstance(x, Closure)
 
 def is_atom(x):
     return is_symbol(x) \
         or is_integer(x) \
         or is_boolean(x) \
-        or is_closure(x)
+#        or is_closure(x)

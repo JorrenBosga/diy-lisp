@@ -2,7 +2,8 @@
 
 import re
 from ast import is_boolean, is_list
-from types import LispError
+# from types import LispError
+from pyparsing import nums
 
 """
 This is the parser module, with the `parse` function which you'll implement as part 1 of
@@ -14,8 +15,43 @@ def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
 
-    #raise NotImplementedError("DIY")
-    return source
+    CommentlessSrc = remove_comments(source)
+
+    # Now we have a string containing everything but the comments
+    # Next step: converting the string into a list of lists, in which the list boundaries are the string's parentheses
+
+
+def split_source(CommentlessSrc):
+    '''This bit of code should recursively take the first expression of the input, remove it from the input and put it
+    in a list until the input string is empty and the expressions are all in order in a list of lists'''
+    list_of_source_expressions = []
+
+    for i in range(3):
+        fexpr = first_expression(CommentlessSrc)
+        print fexpr
+        print type(fexpr)
+        list_of_source_expressions.append(fexpr)
+        print list_of_source_expressions
+        CommentlessSrc.replace(fexpr, '')
+        print CommentlessSrc
+        first_expression(CommentlessSrc)
+    return list_of_source_expressions
+
+
+    # the piece of code beneath only works if source is a list with all elements separated
+def substitution(parseroutput):
+
+    for element in parseroutput:
+        if type(element) == list:
+            substitution(element)
+        elif element in nums:
+            parseroutput[parseroutput.index(element)] = int(element)
+        if element == '#t':
+            parseroutput[parseroutput.index(element)] = True
+        if element == '#f':
+            parseroutput[parseroutput.index(element)] = False
+    return parseroutput
+
 
 ##
 ## Below are a few useful utility functions. These should come in handy when 
@@ -65,19 +101,24 @@ def first_expression(source):
     """Split string into (exp, rest) where exp is the 
     first expression in the string and rest is the 
     rest of the string after this expression."""
+    # Edit: instead of outputting the first expression
+    # and the rest, it now only outputs the first expression
     
     source = source.strip()
     if source[0] == "'":
         exp, rest = first_expression(source[1:])
-        return source[0] + exp, rest
+        return source[0]
+        # return source[0] + exp, rest
     elif source[0] == "(":
         last = find_matching_paren(source)
-        return source[:last + 1], source[last + 1:]
+        return source[:last + 1]
+        # return source[:last + 1], source[last + 1:]
     else:
         match = re.match(r"^[^\s)']+", source)
         end = match.end()
         atom = source[:end]
-        return atom, source[end:]
+        return atom
+        # return atom, source[end:]
 
 ##
 ## The functions below, `parse_multiple` and `unparse` are implemented in order for
@@ -110,3 +151,16 @@ def unparse(ast):
     else:
         # integers or symbols (or lambdas)
         return str(ast)
+
+
+
+parse("""
+   define fact
+       ;; Factorial function
+       (lambda (n)
+           (if (eq n 0)
+               1 ; Factorial of 0 is 1, and we deny
+                 ; the existence of negative numbers
+               (* n (fact (- n 1)))))
+ """)
+
