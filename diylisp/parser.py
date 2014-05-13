@@ -11,60 +11,64 @@ the workshop. Its job is to convert strings into data structures that the evalua
 understand. 
 """
 
+parsed_listOf_expressions = []
+
+
 def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
 
     CommentlessSrc = remove_comments(source)
 
+    split_source(CommentlessSrc)
+    if len(parsed_listOf_expressions) == 1:
+        return parsed_listOf_expressions[0]
+    else:
+        return parsed_listOf_expressions
+
+
     # Now we have a string containing everything but the comments
     # Next step: converting the string into a list of lists, in which the list boundaries are the string's parentheses
 
 
 def split_source(CommentlessSrc):
-    '''This bit of code should recursively take the first expression of the input, remove it from the input and put it
-    in a list until the input string is empty and the expressions are all in order in a list of lists'''
-    list_of_source_expressions = []
+    firstRest = list(first_expression(CommentlessSrc))
+    while firstRest[1] != '':
+        substitution(firstRest[0])
+        firstRest = list(first_expression(firstRest[1]))
+    if firstRest[1] == '':
+        substitution(firstRest[0])
+        return
 
-    for i in range(3):
-        fexpr = first_expression(CommentlessSrc)
-        print fexpr
-        print type(fexpr)
-        list_of_source_expressions.append(fexpr)
-        print list_of_source_expressions
-        CommentlessSrc.replace(fexpr, '')
-        print CommentlessSrc
-        first_expression(CommentlessSrc)
-    return list_of_source_expressions
+
+
+
+
 
 
     # the piece of code beneath only works if source is a list with all elements separated
-def substitution(parseroutput):
+def substitution(element):
 
-    for element in parseroutput:
-        if type(element) == list:
-            substitution(element)
-        elif element in nums:
-            parseroutput[parseroutput.index(element)] = int(element)
-        if element == '#t':
-            parseroutput[parseroutput.index(element)] = True
-        if element == '#f':
-            parseroutput[parseroutput.index(element)] = False
-    return parseroutput
-
-
+    if element in nums:
+        parsed_listOf_expressions.append(int(element))
+    if element == '#t':
+        parsed_listOf_expressions.append(True)
+    if element == '#f':
+        parsed_listOf_expressions.append(False)
+    else:
+        parsed_listOf_expressions.append(element)
 ##
-## Below are a few useful utility functions. These should come in handy when 
-## implementing `parse`. We don't want to spend the day implementing parenthesis 
+## Below are a few useful utility functions. These should come in handy when
+## implementing `parse`. We don't want to spend the day implementing parenthesis
 ## counting, after all.
-## 
+##
 
 def remove_comments(source):
     """Remove from a string anything in between a ; and a linebreak"""
     return re.sub(r";.*\n", "\n", source)
 
 def find_matching_paren(source, start=0):
-    """Given a string and the index of an opening parenthesis, determines 
+    """Given a string and the index of an opening parenthesis, determines
     the index of the matching closing paren."""
 
     assert source[start] == '('
@@ -81,10 +85,10 @@ def find_matching_paren(source, start=0):
     return pos
 
 def split_exps(source):
-    """Splits a source string into subexpressions 
+    """Splits a source string into subexpressions
     that can be parsed individually.
 
-    Example: 
+    Example:
 
         > split_exps("foo bar (baz 123)")
         ["foo", "bar", "(baz 123)"]
@@ -98,27 +102,27 @@ def split_exps(source):
     return exps
 
 def first_expression(source):
-    """Split string into (exp, rest) where exp is the 
-    first expression in the string and rest is the 
+    """Split string into (exp, rest) where exp is the
+    first expression in the string and rest is the
     rest of the string after this expression."""
     # Edit: instead of outputting the first expression
     # and the rest, it now only outputs the first expression
-    
+
     source = source.strip()
     if source[0] == "'":
         exp, rest = first_expression(source[1:])
-        return source[0]
-        # return source[0] + exp, rest
+        # print source[0]
+        return source[0] + exp, rest
     elif source[0] == "(":
         last = find_matching_paren(source)
-        return source[:last + 1]
-        # return source[:last + 1], source[last + 1:]
+        # print source[:last + 1]
+        return source[:last + 1], source[last + 1:]
     else:
         match = re.match(r"^[^\s)']+", source)
         end = match.end()
         atom = source[:end]
-        return atom
-        # return atom, source[end:]
+        # print atom
+        return atom, source[end:]
 
 ##
 ## The functions below, `parse_multiple` and `unparse` are implemented in order for
@@ -152,15 +156,12 @@ def unparse(ast):
         # integers or symbols (or lambdas)
         return str(ast)
 
-
-
-parse("""
-   define fact
-       ;; Factorial function
-       (lambda (n)
-           (if (eq n 0)
-               1 ; Factorial of 0 is 1, and we deny
-                 ; the existence of negative numbers
-               (* n (fact (- n 1)))))
- """)
-
+# print parse("""
+#    define fact
+#        ;; Factorial function
+#        (lambda (n)
+#            (if (eq n 0)
+#                1 ; Factorial of 0 is 1, and we deny
+#                  ; the existence of negative numbers
+#                (* n (fact (- n 1)))))
+# """)
