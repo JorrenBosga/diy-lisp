@@ -29,10 +29,10 @@ def evaluate(ast, env):
     if ast[0] == "atom":
         return is_atom(evaluate(ast[1], env))
     if ast[0] == 'quote':
-        return ast[1]
+        return evaluate(ast[1], env)
     if ast[0] == 'eq':
         if is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env)):
-            if ast[1] == ast[2]:
+            if evaluate(ast[1], env) == evaluate(ast[2], env):
                 return True
             else:
                 return False
@@ -40,21 +40,36 @@ def evaluate(ast, env):
             return False
 
     # Basic arithmetic
-    if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
-        if ast[0] == '+':
-            return ast[1] + ast[2]
-        if ast[0] == '-':
-            return ast[1] - ast[2]
-        if ast[0] == '/':
-            return ast[1] / ast[2]
-        if ast[0] == '*':
-            return ast[1] * ast[2]
-        if ast[0] == 'mod':
-            return ast[1] % ast[2]
-        if ast[0] == '>':
-            return ast[1] > ast[2]
-        if ast[0] == '<':
-            return ast[1] < ast[2]
+
+    if ast[0] == '+':
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+            return evaluate(ast[1], env) + evaluate(ast[2], env)
+    if ast[0] == '-':
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+            return evaluate(ast[1], env) - evaluate(ast[2], env)
+    if ast[0] == '/':
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+            return evaluate(ast[1], env) / evaluate(ast[2], env)
+    if ast[0] == '*':
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+            return evaluate(ast[1], env) * evaluate(ast[2], env)
+    if ast[0] == 'mod':
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+            return evaluate(ast[1], env) % evaluate(ast[2], env)
+    if ast[0] == '>':
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+            return evaluate(ast[1], env) > evaluate(ast[2], env)
+    if ast[0] == '<':
+        if is_integer(evaluate(ast[1], env)) and is_integer(evaluate(ast[2], env)):
+            return evaluate(ast[1], env) < evaluate(ast[2], env)
+
+
+    # If statement
+    if ast[0] == 'if':
+        if evaluate(ast[1], env) == True:
+            return evaluate(ast[2], env)
+        if evaluate(ast[1], env) == False:
+            return evaluate(ast[3], env)
+
     else:
         raise LispError
-
