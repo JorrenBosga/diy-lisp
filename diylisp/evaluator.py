@@ -29,7 +29,7 @@ def evaluate(ast, env):
     if ast[0] == "atom":
         return is_atom(evaluate(ast[1], env))
     if ast[0] == 'quote':
-        return evaluate(ast[1], env)
+        return ast[1]
     if ast[0] == 'eq':
         if is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env)):
             if evaluate(ast[1], env) == evaluate(ast[2], env):
