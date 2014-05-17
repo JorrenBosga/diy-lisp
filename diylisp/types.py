@@ -30,8 +30,9 @@ class Environment:
         raise LispError("my-missing-var")
 
     def extend(self, variables):
-        self.variables = dict(self.variables.items() + variables.items())
-        return variables
+        extendedvars = dict(self.variables.items() + variables.items())
+        return Environment(extendedvars)
+
 
     def set(self, symbol, value):
         raise NotImplementedError("DIY")
