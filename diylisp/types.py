@@ -27,7 +27,7 @@ class Environment:
     def lookup(self, symbol):
         if symbol in self.variables:
             return self.variables[symbol]
-        raise LispError("my-missing-var")
+        raise LispError(symbol)
 
     def extend(self, variables):
         extendedvars = dict(self.variables.items() + variables.items())
@@ -35,6 +35,11 @@ class Environment:
 
 
     def set(self, symbol, value):
-        raise NotImplementedError("DIY")
+        if symbol in self.variables:
+            raise LispError("already defined")
+        else:
+            self.variables = {}
+            self.variables[symbol] = value
+            return Environment(self.variables)
 
-print type(Environment.extend)
+
