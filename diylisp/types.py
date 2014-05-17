@@ -25,10 +25,15 @@ class Environment:
         self.variables = variables if variables else {}
 
     def lookup(self, symbol):
-        raise NotImplementedError("DIY")
+        if symbol in self.variables:
+            return self.variables[symbol]
+        raise LispError("my-missing-var")
 
     def extend(self, variables):
-        raise NotImplementedError("DIY")
+        self.variables = dict(self.variables.items() + variables.items())
+        return variables
 
     def set(self, symbol, value):
         raise NotImplementedError("DIY")
+
+print type(Environment.extend)

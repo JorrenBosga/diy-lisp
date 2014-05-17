@@ -18,11 +18,7 @@ def evaluate(ast, env):
     """Evaluate an Abstract Syntax Tree in the specified environment."""
 
     # Simple types
-    if is_boolean(ast):
-        return ast
-    if is_symbol(ast):
-        return ast
-    if is_integer(ast):
+    if is_boolean(ast) or is_symbol(ast) or is_integer(ast):
         return ast
 
     # Atoms, quotes and equal
@@ -31,13 +27,8 @@ def evaluate(ast, env):
     if ast[0] == 'quote':
         return ast[1]
     if ast[0] == 'eq':
-        if is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env)):
-            if evaluate(ast[1], env) == evaluate(ast[2], env):
-                return True
-            else:
-                return False
-        else:
-            return False
+        return is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env)) and evaluate(ast[1], env) == evaluate(ast[2], env)
+
 
     # Basic arithmetic
 
