@@ -19,18 +19,32 @@ def evaluate(ast, env):
 
     # Simple types
     if is_symbol(ast):
-        return Environment.lookup(env, ast)
+        splitast = ast.split(' ')
+        if splitast[0] == 'define':
+            return Environment.extend(env, dict(zip(splitast[1:2], splitast[2::])))
+        else:
+            return Environment.lookup(env, ast)
 
     if is_boolean(ast) or is_integer(ast):
         return ast
 
     # Atoms, quotes and equal
-    if ast[0] == "atom":
+    if ast[0] == 'atom':
         return is_atom(evaluate(ast[1], env))
     if ast[0] == 'quote':
         return ast[1]
     if ast[0] == 'eq':
         return is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env)) and evaluate(ast[1], env) == evaluate(ast[2], env)
+    if ast[0] == 'define':
+        assert_valid_definition(ast[1:])
+        symbol = ast[1]
+        value = evaluate(ast[2], env)
+        env.set(symbol, value)
+        return symbol
+    if ast[0] == 'lambda':
+        if len(ast) != 3:
+            raise LispError("Wrong number of arguments")
+
 
 
     # Basic arithmetic
