@@ -58,7 +58,8 @@ def evaluate(ast, env):
         if ast[0] == 'quote':
             return ast[1]
         if ast[0] == 'eq':
-            return is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env)) and evaluate(ast[1], env) == evaluate(ast[2], env)
+            return ( is_atom(evaluate(ast[1], env)) and is_atom(evaluate(ast[2], env))
+                     and evaluate(ast[1], env) == evaluate(ast[2], env) )
 
         # If statement
         if ast[0] == 'if':
@@ -66,6 +67,12 @@ def evaluate(ast, env):
                 return evaluate(ast[2], env)
             if evaluate(ast[1], env) == False:
                 return evaluate(ast[3], env)
+
+        # Lists
+        if ast[0] == 'cons':
+            head = evaluate(ast[1], env)
+            tail = evaluate(ast[2], env)
+            return [head] + tail
 
         # Functions
         if ast[0] == 'define':
