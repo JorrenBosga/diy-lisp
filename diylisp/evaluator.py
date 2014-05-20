@@ -74,6 +74,26 @@ def evaluate(ast, env):
             tail = evaluate(ast[2], env)
             return [head] + tail
 
+        if ast[0] == 'head':
+            eval_new_ast = evaluate(ast[1], env)
+            if eval_new_ast == []:
+                raise LispError
+            else:
+                return eval_new_ast[0]
+
+        if ast[0] == 'tail':
+            eval_new_ast = evaluate(ast[1], env)
+            if eval_new_ast == []:
+                raise LispError
+            else:
+                return eval_new_ast[1:]
+
+        if ast[0] == 'empty':
+            if evaluate(ast[1], env) == []:
+                return True
+            else:
+                return False
+
         # Functions
         if ast[0] == 'define':
             assert_valid_definition(ast[1:])
