@@ -170,5 +170,3 @@ def unparse(ast):
     else:
         # integers or symbols (or lambdas)
         return str(ast)
-
-parse("(define x 1000)")
