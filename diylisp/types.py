@@ -24,24 +24,20 @@ class Closure:
 class Environment:
 
     def __init__(self, variables=None):
-        self.variables = variables if variables else {}
+        self.bindings = variables if variables else {}
 
     def lookup(self, symbol):
-        if symbol in self.variables:
-            return self.variables[symbol]
-        raise LispError(symbol)
+        if symbol in self.bindings:
+            return self.bindings[symbol]
+        else:
+            raise LispError("Variable '%s' is undefined" % symbol)
 
     def extend(self, variables):
-        extendedvars = dict(self.variables.items() + variables.items())
-        return Environment(extendedvars)
-
+        new_bindings = self.bindings.copy()
+        new_bindings.update(variables)
+        return Environment(new_bindings)
 
     def set(self, symbol, value):
-        if symbol in self.variables:
-            raise LispError("already defined")
-        else:
-            self.variables = {}
-            self.variables[symbol] = value
-            return Environment(self.variables)
-
-
+        if symbol in self.bindings:
+            raise LispError("Variable '%s' is already defined." % symbol)
+        self.bindings[symbol] = value
