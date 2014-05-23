@@ -2,31 +2,30 @@
 
 (define not
     (lambda (b)
-        (if b #t #f)))
+        (if b #f #t)))
 
 (define or
-  (lambda (a b)
-    (if a #t (if b #t #f))))
+  (lambda (l r)
+    (if l #t (if r #t #f))))
 
 (define and
-     (lambda (a b)
-         (if a (if b #t #f) #f)))
+     (lambda (l r)
+         (if l (if r #t #f) #f)))
  
 (define xor
-     (lambda (a b)
-         (and (or a b)
-              (not (and a b)))))
-
-;; >=, <=, < 
+     (lambda (l r)
+         (and (or l r)
+              (not (and l r)))))
+ 
 
 (define >=
-     (lambda (a b)
-         (or (> a b)
-             (eq a b))))
+     (lambda (l r)
+         (or (> l r)
+             (eq l r))))
  
 (define <=
-     (lambda (a b)
-         (not (> a b))))
+     (lambda (l r)
+         (not (> l r))))
  
 (define <
      (lambda (x y)
